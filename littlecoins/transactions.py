@@ -11,22 +11,21 @@ import numpy as np
 import pandas as pd
 import sys
 
-# DC = pd.read_csv("DC_transactions.csv")
 #List to hold file names
 def list_of_files(location='.', suffixe='.csv'):
         """we create a list like -> ['file1.csv', 'file2.csv' , 'file3.csv']"""
         return [files for files in os.listdir(location) if files.endswith(suffixe)]
 
 # Create a function to process all of the csv files
-def concating_dataframes(file_csv):
-        """bla bla bla"""
+def read_file_csv(file_csv):
+        """read .csv file -> dataframe with columns names added"""
         list_cols = ['City','Acc.','Type','Date','num','Description','Cheque','Expenses','Incomes','NoK1','NoK2','NoK3','NoK4','Cum.']
         df = pd.read_csv(file_csv, header=None, names = list_cols , encoding='latin1')
         return df
 
 def card_debit():
     #Create a list of dataframes
-    list_to_concat = [ concating_dataframes(df_name)for df_name in list_of_files()]
+    list_to_concat = [ read_file_csv(df_name)for df_name in list_of_files()]
     df_total = pd.concat(list_to_concat)
     # #Clean the datas
     df_total['Date'] = pd.to_datetime(df_total['Date'], format="%Y-%m-%d", errors="ignore")
@@ -73,7 +72,6 @@ def generate_df(file_name , data):
     df['Date'] = pd.to_datetime(df['Date'],format="%d %m %Y",errors='ignore')
     df = df.drop(['Date_2'], axis=1)
     return df
-
 
 def card_credit():
     df_list = [generate_df(fname, scraping_txt_file(fname)) for fname in grapping_txt_files_list('.')]
