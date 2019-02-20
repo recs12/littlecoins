@@ -11,9 +11,20 @@ import numpy as np
 import pandas as pd
 import sys
 
-#List to hold file names
 def list_of_files(location='.', suffixe='.csv'):
-        """we create a list like -> ['file1.csv', 'file2.csv' , 'file3.csv']"""
+    """Get a list of file names in the current location.
+
+    Parameters
+    ----------
+    location : str (default local)
+        The file location of the files.csv
+    suffixe : str (default='.csv')
+
+    Returns
+    -------
+    list
+            list_of_files('.') ->  ['file1.csv', 'file2.csv' , 'file3.csv']
+    """
         return [files for files in os.listdir(location) if files.endswith(suffixe)]
 
 # Create a function to process all of the csv files
@@ -76,7 +87,6 @@ def generate_df(file_name , data):
 def card_credit():
     df_list = [generate_df(fname, scraping_txt_file(fname)) for fname in grapping_txt_files_list('.')]
     df_total = pd.concat(df_list)
-
     REGX = r"^FRAIS.*DE.*CR.*IT"
     frais = df_total[df_total['Description'].str.contains(REGX, regex=True).values]
     frais.loc[frais.Description.str.contains(REGX, regex=True),'Description']= 'credit fees'  
@@ -89,9 +99,7 @@ def card_credit():
     return df
 
 if __name__ == "__main__":
-    dc = card_debit()
-    cc = card_credit()
-    total = pd.concat([cc, dc])
+    total = pd.concat([card_credit(), card_debit()])
     filename = 'total_transactions.csv'
     total.to_csv(filename, index=None)
     print(f"-> {filename} created in the current folder. ")
