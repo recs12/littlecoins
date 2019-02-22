@@ -25,7 +25,7 @@ def list_of_files(location='.', suffixe='.csv'):
     list
             list_of_files('.') ->  ['file1.csv', 'file2.csv' , 'file3.csv']
     """
-        return [files for files in os.listdir(location) if files.endswith(suffixe)]
+    return [files for files in os.listdir(location) if files.endswith(suffixe)]
 
 # Create a function to process all of the csv files
 def read_file_csv(file_csv):
