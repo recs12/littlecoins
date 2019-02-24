@@ -39,10 +39,11 @@ def card_debit():
     list_to_concat = [ read_file_csv(df_name)for df_name in list_of_files()]
     df_total = pd.concat(list_to_concat)
     # #Clean the datas
-    df_total['Date'] = pd.to_datetime(df_total['Date'], format="%Y-%m-%d", errors="ignore")
+    df_total['Date'] = pd.to_datetime(df_total['Date'], format="%d/%m/%Y" , errors="ignore")
     df_index_by_dates = df_total.set_index(df_total['Date'])
     transactions = df_index_by_dates[['Acc.', 'Date' , 'Description', 'Cheque','Expenses', 'Incomes']]
     transactions.loc[:,'card'] = 'debit'
+    transactions = transactions.dropna(how='all')
     return transactions
 
 # ********************************************************
@@ -62,7 +63,6 @@ def scraping_txt_file(filetxt):
                                 r"(?P<Date_inscription>\d{2} .{3} \d{4})\t*"\
                                 r"(?P<Transaction>\d{3})\t{3}"\
                                 r"(?P<data4>.*|\s)\t{1}"\
-                                #r"(?P<Description>.*)\t{1}"\
                                 r"(?P<Montant>\d{1,4},\d{2})"
                                 )
             matchObjects = re.search(pattern, line)
@@ -80,7 +80,7 @@ def generate_df(file_name , data):
     calendar = {'JAN':'01' , 'FÉV':'02' , 'MAR':'03' , 'AVR':'04' , 'MAI':'05', 'JUN':'06' , 'JUI':'07' , 'AOÛ':'08' , 'SEP':'09' , 'OCT':'10', 'NOV':'11', 'DÉC':'12'}
     for month,number in calendar.items():
         df['Date'] = df['Date'].str.replace(month,number)         
-    df['Date'] = pd.to_datetime(df['Date'],format="%d %m %Y",errors='ignore')
+    df['Date'] = pd.to_datetime(df['Date'], format="%Y-%m-%d", errors='ignore')
     df = df.drop(['Date_2'], axis=1)
     return df
 
@@ -96,10 +96,14 @@ def card_credit():
     transactions.loc[:,'card'] = 'credit' 
     df = pd.concat([transactions,frais])
     df['Expenses'] = df['Expenses'].str.replace(',','.') 
-    return df
+    df = df.dropna(how='all')
+    return 
 
 if __name__ == "__main__":
     total = pd.concat([card_credit(), card_debit()])
+    total['Date'] = pd.to_datetime(total['Date']).dt.strftime('%Y-%m-%d')
+    total = total.sort_values(by='Date', ascending=False)
+    total = total.dropna(how='all')
     filename = 'total_transactions.csv'
     total.to_csv(filename, index=None)
     print(f"-> {filename} created in the current folder. ")
