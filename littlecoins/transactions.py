@@ -42,8 +42,8 @@ def card_debit():
     df_total['Date'] = pd.to_datetime(df_total['Date'], format="%d/%m/%Y" , errors="ignore")
     df_index_by_dates = df_total.set_index(df_total['Date'])
     transactions = df_index_by_dates[['Acc.', 'Date' , 'Description', 'Cheque','Expenses', 'Incomes']]
-    transactions.loc[:,'card'] = 'debit'
     transactions = transactions.dropna(how='all')
+    transactions.loc[:,'card'] = 'debit'
     return transactions
 
 # ********************************************************
@@ -90,20 +90,20 @@ def card_credit():
     REGX = r"^FRAIS.*DE.*CR.*IT"
     frais = df_total[df_total['Description'].str.contains(REGX, regex=True).values]
     frais.loc[frais.Description.str.contains(REGX, regex=True),'Description']= 'credit fees'  
+    frais = frais.dropna(how='all')
     frais.loc[:,'card'] = 'credit'
     print(frais.columns)
     transactions = df_total[~df_total['Description'].str.contains(REGX).values]
+    transactions = transactions.dropna(how='all')
     transactions.loc[:,'card'] = 'credit' 
     df = pd.concat([transactions,frais])
     df['Expenses'] = df['Expenses'].str.replace(',','.') 
-    df = df.dropna(how='all')
     return 
 
 if __name__ == "__main__":
     total = pd.concat([card_credit(), card_debit()])
     total['Date'] = pd.to_datetime(total['Date']).dt.strftime('%Y-%m-%d')
     total = total.sort_values(by='Date', ascending=False)
-    total = total.dropna(how='all')
     filename = 'total_transactions.csv'
     total.to_csv(filename, index=None)
     print(f"-> {filename} created in the current folder. ")
