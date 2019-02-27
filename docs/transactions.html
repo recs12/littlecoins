@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>transactions.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>transactions.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>Place all the .csv files into a DataFrame </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sys</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Get a list of file names in the current location.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">list_of_files</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">suffixe</span><span class="o">=</span><span class="s1">&#39;.csv&#39;</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <h2>Parameters</h2>
+<p>location : str (default local)
+    The file location of the files.csv
+suffixe : str (default=&rsquo;.csv&rsquo;)</p>
+<h2>Returns</h2>
+<p>list
+        list_of_files(&lsquo;.&rsquo;) -&gt;  [&lsquo;file1.csv&rsquo;, &lsquo;file2.csv&rsquo; , &lsquo;file3.csv&rsquo;]</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="p">[</span><span class="n">files</span> <span class="k">for</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">location</span><span class="p">)</span> <span class="k">if</span> <span class="n">files</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffixe</span><span class="p">)]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Create a function to process all of the csv files
+read .csv file -&gt; dataframe with columns names added</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">read_file_csv</span><span class="p">(</span><span class="n">file_csv</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>        <span class="n">list_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;City&#39;</span><span class="p">,</span><span class="s1">&#39;Acc.&#39;</span><span class="p">,</span><span class="s1">&#39;Type&#39;</span><span class="p">,</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;num&#39;</span><span class="p">,</span><span class="s1">&#39;Description&#39;</span><span class="p">,</span><span class="s1">&#39;Cheque&#39;</span><span class="p">,</span><span class="s1">&#39;Expenses&#39;</span><span class="p">,</span><span class="s1">&#39;Incomes&#39;</span><span class="p">,</span><span class="s1">&#39;NoK1&#39;</span><span class="p">,</span><span class="s1">&#39;NoK2&#39;</span><span class="p">,</span><span class="s1">&#39;NoK3&#39;</span><span class="p">,</span><span class="s1">&#39;NoK4&#39;</span><span class="p">,</span><span class="s1">&#39;Cum.&#39;</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">file_csv</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">list_cols</span> <span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;latin1&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">card_debit</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Create a list of dataframes</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">list_to_concat</span> <span class="o">=</span> <span class="p">[</span> <span class="n">read_file_csv</span><span class="p">(</span><span class="n">df_name</span><span class="p">)</span><span class="k">for</span> <span class="n">df_name</span> <span class="ow">in</span> <span class="n">list_of_files</span><span class="p">()]</span>
+    <span class="n">df_total</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">list_to_concat</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <h1>Clean the datas</h1>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">df_total</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_total</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y&quot;</span> <span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+    <span class="n">df_index_by_dates</span> <span class="o">=</span> <span class="n">df_total</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">df_total</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span>
+    <span class="n">transactions</span> <span class="o">=</span> <span class="n">df_index_by_dates</span><span class="p">[[</span><span class="s1">&#39;Acc.&#39;</span><span class="p">,</span> <span class="s1">&#39;Date&#39;</span> <span class="p">,</span> <span class="s1">&#39;Description&#39;</span><span class="p">,</span> <span class="s1">&#39;Cheque&#39;</span><span class="p">,</span><span class="s1">&#39;Expenses&#39;</span><span class="p">,</span> <span class="s1">&#39;Incomes&#39;</span><span class="p">]]</span>
+    <span class="n">transactions</span> <span class="o">=</span> <span class="n">transactions</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">transactions</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;card&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;debit&#39;</span>
+    <span class="k">return</span> <span class="n">transactions</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>CC = pd.read_csv(&ldquo;CC_transactions.csv&rdquo;)
+bla bla bla</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">grapping_txt_files_list</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">suffixe</span><span class="o">=</span><span class="s1">&#39;.txt&#39;</span><span class="p">):</span> <span class="c1"># prefixe=None, middle=&#39;######&#39;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">location</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffixe</span><span class="p">)</span><span class="o">==</span><span class="bp">True</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>bla bla bla</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">scraping_txt_file</span><span class="p">(</span><span class="n">filetxt</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">datum</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="n">filetxt</span> <span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;latin1&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">foo</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">foo</span><span class="p">:</span> <span class="c1">#I think a genertator is imaginable here!</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+                                <span class="sa">r</span><span class="s2">&quot;(?P&lt;Date_de_transaction&gt;\d{2} .{3} \d{4})\t*&quot;</span> \
+                                <span class="sa">r</span><span class="s2">&quot;(?P&lt;Date_inscription&gt;\d{2} .{3} \d{4})\t*&quot;</span>\
+                                <span class="sa">r</span><span class="s2">&quot;(?P&lt;Transaction&gt;\d{3})\t{3}&quot;</span>\
+                                <span class="sa">r</span><span class="s2">&quot;(?P&lt;data4&gt;.*|\s)\t{1}&quot;</span>\
+                                <span class="sa">r</span><span class="s2">&quot;(?P&lt;Montant&gt;\d{1,4},\d{2})&quot;</span>
+                                <span class="p">)</span>
+            <span class="n">matchObjects</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">matchObjects</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">datum</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matchObjects</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span> <span class="c1"># extract a group of dict</span>
+    <span class="k">return</span> <span class="n">datum</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>bla bla bla</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">generate_df</span><span class="p">(</span><span class="n">file_name</span> <span class="p">,</span> <span class="n">data</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="kn">import</span> <span class="nn">csv</span>
+    <span class="n">csv_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span> <span class="c1"># replace .txt - &gt; .csv</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">csv_name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;csv_name : not a string&quot;</span> 
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span><span class="s1">&#39;Date_2&#39;</span><span class="p">,</span><span class="s1">&#39;number&#39;</span><span class="p">,</span><span class="s1">&#39;Description&#39;</span><span class="p">,</span><span class="s1">&#39;Expenses&#39;</span><span class="p">])</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>change the date format of columns &lsquo;Date&rsquo; and delete column &lsquo;Date_2&rsquo;</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">calendar</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;JAN&#39;</span><span class="p">:</span><span class="s1">&#39;01&#39;</span> <span class="p">,</span> <span class="s1">&#39;FÉV&#39;</span><span class="p">:</span><span class="s1">&#39;02&#39;</span> <span class="p">,</span> <span class="s1">&#39;MAR&#39;</span><span class="p">:</span><span class="s1">&#39;03&#39;</span> <span class="p">,</span> <span class="s1">&#39;AVR&#39;</span><span class="p">:</span><span class="s1">&#39;04&#39;</span> <span class="p">,</span> <span class="s1">&#39;MAI&#39;</span><span class="p">:</span><span class="s1">&#39;05&#39;</span><span class="p">,</span> <span class="s1">&#39;JUN&#39;</span><span class="p">:</span><span class="s1">&#39;06&#39;</span> <span class="p">,</span> <span class="s1">&#39;JUI&#39;</span><span class="p">:</span><span class="s1">&#39;07&#39;</span> <span class="p">,</span> <span class="s1">&#39;AOÛ&#39;</span><span class="p">:</span><span class="s1">&#39;08&#39;</span> <span class="p">,</span> <span class="s1">&#39;SEP&#39;</span><span class="p">:</span><span class="s1">&#39;09&#39;</span> <span class="p">,</span> <span class="s1">&#39;OCT&#39;</span><span class="p">:</span><span class="s1">&#39;10&#39;</span><span class="p">,</span> <span class="s1">&#39;NOV&#39;</span><span class="p">:</span><span class="s1">&#39;11&#39;</span><span class="p">,</span> <span class="s1">&#39;DÉC&#39;</span><span class="p">:</span><span class="s1">&#39;12&#39;</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">month</span><span class="p">,</span><span class="n">number</span> <span class="ow">in</span> <span class="n">calendar</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">month</span><span class="p">,</span><span class="n">number</span><span class="p">)</span>         
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">],</span> <span class="n">format</span><span class="o">=</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;Date_2&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">card_credit</span><span class="p">():</span>
+    <span class="n">df_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">generate_df</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">scraping_txt_file</span><span class="p">(</span><span class="n">fname</span><span class="p">))</span> <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">grapping_txt_files_list</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
+    <span class="n">df_total</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">)</span>
+    <span class="n">REGX</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^FRAIS.*DE.*CR.*IT&quot;</span>
+    <span class="n">frais</span> <span class="o">=</span> <span class="n">df_total</span><span class="p">[</span><span class="n">df_total</span><span class="p">[</span><span class="s1">&#39;Description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">REGX</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+    <span class="n">frais</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">frais</span><span class="o">.</span><span class="n">Description</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">REGX</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span><span class="s1">&#39;Description&#39;</span><span class="p">]</span><span class="o">=</span> <span class="s1">&#39;credit fees&#39;</span>  
+    <span class="n">frais</span> <span class="o">=</span> <span class="n">frais</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">frais</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;card&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;credit&#39;</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">frais</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">transactions</span> <span class="o">=</span> <span class="n">df_total</span><span class="p">[</span><span class="o">~</span><span class="n">df_total</span><span class="p">[</span><span class="s1">&#39;Description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">REGX</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+    <span class="n">transactions</span> <span class="o">=</span> <span class="n">transactions</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+    <span class="n">transactions</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;card&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;credit&#39;</span> 
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">transactions</span><span class="p">,</span><span class="n">frais</span><span class="p">])</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Expenses&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Expenses&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> 
+    <span class="k">return</span> 
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">card_credit</span><span class="p">(),</span> <span class="n">card_debit</span><span class="p">()])</span>
+    <span class="n">total</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">total</span><span class="p">[</span><span class="s1">&#39;Date&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">total</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;Date&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;total_transactions.csv&#39;</span>
+    <span class="n">total</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;-&gt; {filename} created in the current folder. &quot;</span><span class="p">)</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
