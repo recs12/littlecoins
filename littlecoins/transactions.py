@@ -74,13 +74,11 @@ def generate_df(file_name , data):
     """bla bla bla"""
     import csv
     csv_name = str(os.path.splitext(file_name)[-2]) + '.csv' # replace .txt - > .csv
-    assert type(csv_name) == str, "csv_name : not a string" 
     df = pd.DataFrame(data, columns=['date_transaction','Date_2','number','Description','Expenses'])
-    #change the date format of columns 'date_transaction' and delete column 'Date_2'
     calendar = {'JAN':'01' , 'FÉV':'02' , 'MAR':'03' , 'AVR':'04' , 'MAI':'05', 'JUN':'06' , 'JUI':'07' , 'AOÛ':'08' , 'SEP':'09' , 'OCT':'10', 'NOV':'11', 'DÉC':'12'}
     for month,number in calendar.items():
         df['date_transaction'] = df['date_transaction'].str.replace(month,number)         
-    df['date_transaction'] = pd.to_datetime(df['date_transaction'], format="%Y-%m-%d", errors='ignore')
+    df['date_transaction'] = pd.to_datetime(df['date_transaction'] , format="%Y-%m-%d",errors='ignore') 
     df = df.drop(['Date_2'], axis=1)
     return df
 
@@ -98,10 +96,11 @@ def card_credit():
     transactions.loc[:,'card'] = 'credit' 
     df = pd.concat([transactions,frais], sort=False)
     df['Expenses'] = df['Expenses'].str.replace(',','.') 
-    return 
+    return df
 
 if __name__ == "__main__":
-    total = pd.concat([card_credit(), card_debit()], sort=False)
+    credit , debit = card_credit() , card_debit()
+    total = pd.concat([credit, debit], sort=False)
     total['date_transaction'] = pd.to_datetime(total['date_transaction']).dt.strftime('%Y-%m-%d')
     total = total.sort_values(by='date_transaction', ascending=False)
     filename = 'total_transactions.csv'
